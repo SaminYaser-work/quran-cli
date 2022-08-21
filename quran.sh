@@ -8,20 +8,50 @@ BOLD=$(tput bold)
 surah=$1
 ayah=$2
 
+# Check if surah is valid
 if [[ $surah -gt 144 ]]; then
   echo -e "${RED}Error:${NC} There are only 114 surahs in the Noble Quran."
   exit 1
 fi
 
+# Functions
+get_full_surah()
+{
+  local res
+  res=$(awk -F "|" -v s="$surah" '$2 == s {print $4"\n"}' $file)
+  echo "$res"
+}
+
+get_full_notes()
+{
+  local res
+  res=$(awk -F '|' -v s="$surah" '$2 == s {print $5"\n"}' "$file" | sed "s/;;/\n\n/g" | sed "/::blank::/{N;d;}")
+  echo "$res"
+}
+
+get_ayah()
+{
+  local res
+  res=$(awk -F "|" -v s="$surah" -v a="$ayah" '$2 == s && $3 == a {print $4 "\n"}' $file)
+  echo "$res"
+}
+
+get_note()
+{
+  local res
+  res=$(awk -F '|' -v s="$surah" -v a="$ayah" '$2 == s && $3 == a {print $5 "\n"}' $file | sed "s/;;/\n\n/g" | sed "/::blank::/{N;d;}")
+  echo "$res"
+}
+
 # Get the whole surah and footnotes
 if [[ -z $ayah ]]; then
-  ayahs=$(awk -F "|" -v s="$surah" '$2 == s {print $4"\n"}' $file)
-  footnotes=$(awk -F '|' -v s="$surah" '$2 == s {print $5"\n"}' "$file" | sed "s/;;/\n\n/g" | sed "/::blank::/{N;d;}")
+  ayahs=$(get_full_surah)
+  footnotes=$(get_full_notes)
 
-# Get only specific ayah and footnotes
+# Get specific ayah and footnotes
 else
-  ayahs=$(awk -F "|" -v s="$surah" -v a="$ayah" '$2 == s && $3 == a {print $4 "\n"}' $file)
-  footnotes=$(awk -F '|' -v s="$surah" -v a="$ayah" '$2 == s && $3 == a {print $5 "\n"}' $file | sed "s/;;/\n\n/g" | sed "/::blank::/{N;d;}")
+  ayahs=$(get_ayah)
+  footnotes=$(get_note)
 fi
 
 
