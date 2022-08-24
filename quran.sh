@@ -9,6 +9,10 @@ RED='\033[0;31m'
 NC='\033[0m'
 BOLD=$(tput bold)
 
+remove_verse_number='sed "s/([0-9]\+) //g"'
+footnote_new_line='sed "s/;;/\n\n/g"'
+footnote_del_blank_line='sed "/::blank::/{N;d;}"'
+
 # Arguments
 surah=$1
 ayah=$2
@@ -19,6 +23,7 @@ all=0
 no_footnote=0
 range_given=0
 simple_output=0
+output_verse=0
 
 if [[ -n $ayahLast ]]; then
   range_given=1
@@ -89,6 +94,18 @@ get_ayah() {
   echo "$res"
 }
 
+get_verse() {
+  local res
+  res=$(awk -F "|" -v a="$ayah" '$1 == a {print $4 "\n"}' $file | eval "$remove_verse_number")
+  echo "$res"
+}
+
+get_verse_note() {
+  local res
+  res=$(awk -F "|" -v a="$ayah" '$1 == a {print $5 "\n"}' $file | eval "$footnote_new_line" | eval "$footnote_del_blank_line")
+  echo "$res"
+}
+
 get_note() {
   local res
   res=$(awk -F '|' -v s="$surah" -v a="$ayah" '$2 == s && $3 == a {print $5 "\n"}' $file | sed "s/;;/\n\n/g" | sed "/::blank::/{N;d;}")
@@ -103,7 +120,7 @@ print_help() {
 # Parsing arguments
 ###########################################
 
-while getopts 'ahs' opt; do
+while getopts 'ahsv:' opt; do
   case "$opt" in
   a)
     all=1
@@ -117,6 +134,15 @@ while getopts 'ahs' opt; do
     simple_output=1
     surah=$2
     ayah=$3
+    ;;
+
+  v)
+    output_verse=1
+    ayah=${OPTARG}
+    if [[ ayah -gt 6236 ]]; then
+      echo -e "${RED}Error:${NC} There are only 6236 verses in the Noble Quran."
+      exit 1
+    fi
     ;;
 
   h)
@@ -172,7 +198,22 @@ fi
 
 # simple output
 if [[ $simple_output -eq 1 ]]; then
+
   echo $(get_ayah_simple)
+  exit 0
+fi
+
+# simple output
+if [[ $output_verse -eq 1 ]]; then
+  get_verse
+  footnotes=$(get_verse_note)
+
+  if [[ -n $footnotes ]]; then
+    echo
+    echo "Footnotes:"
+    echo ----------
+    echo "$footnotes"
+  fi
   exit 0
 fi
 
