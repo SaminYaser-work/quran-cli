@@ -42,7 +42,7 @@ if [ -z "$surah" ]; then
 fi
 
 # Check if surah is valid
-if [[ $surah -gt 144 ]]; then
+if [[ $surah -gt 115 ]]; then
   echo -e "${RED}Error:${NC} There are only 114 surahs in the Noble Quran."
   exit 1
 fi
@@ -50,6 +50,13 @@ fi
 ###########################################
 # Functions
 ###########################################
+
+check_surah_exists() {
+  if [[ $1 -gt 144 ]]; then
+    echo -e "${RED}Error:${NC} There are only 114 surahs in the Noble Quran."
+    exit 1
+  fi
+}
 
 # Get the title of the surah
 get_surah_name() {
@@ -80,6 +87,7 @@ get_all_notes() {
   echo "$res"
 }
 
+# TODO: Format output nicely
 get_full_quran() {
   local res
   res=$(awk -F '|' '{print $4"|"$5}' "$file" | sed "s/;;/ /g" | sed "s/::blank::/No notes available/g")
@@ -159,6 +167,7 @@ while getopts 'ahsv:i:' opt; do
     ;;
 
   i)
+    check_surah_exists "$OPTARG"
     get_surah_info "$OPTARG"
     exit 0
     ;;
@@ -217,11 +226,10 @@ fi
 # simple output
 if [[ $simple_output -eq 1 ]]; then
 
-  echo $(get_ayah_simple)
+  get_ayah_simple
   exit 0
 fi
 
-# simple output
 if [[ $output_verse -eq 1 ]]; then
   get_verse
   footnotes=$(get_verse_note)
