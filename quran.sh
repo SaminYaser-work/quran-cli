@@ -5,6 +5,7 @@
 ###########################################
 
 file='./data/saheeh_english_fn.csv'
+metadata='./data/metadata.csv'
 RED='\033[0;31m'
 NC='\033[0m'
 BOLD=$(tput bold)
@@ -50,6 +51,22 @@ fi
 # Functions
 ###########################################
 
+# Get the title of the surah
+get_surah_name() {
+  # _index,_ayas,_start,_name,_tname,_ename,_type,_order,_rukus
+
+  local res
+  res=$(awk -F, -v surah="$surah" '$1 == surah {print $4 " | " $5 " ("$6")"}' "$metadata")
+  echo "$res"
+}
+
+# Prints full information about the surah
+get_surah_info() {
+  local res
+  res=$(awk -F, -v surah="$1" '$1 == surah {print "Index: " $1 "\nNumber of Ayahs: " $2 "\nStarting Verse Number: " $3+1 "\nName: " $4 "\nName (Transliterated): " $5 "\nName (Translation): " $6 "\nType: " $7 "\nOrder: " $8 "\nNumber of Rukūʿ: " $9}' "$metadata")
+  echo "$res"
+}
+
 get_all_ayahs() {
   local res
   res=$(awk -F "|" '{print $4""}' $file)
@@ -84,7 +101,7 @@ get_full_notes() {
 # Get single ayah without verse number and references
 get_ayah_simple() {
   local res
-  res=$(awk -F "|" -v s="$surah" -v a="$ayah" '$2 == s && $3 == a {print $4}' $file | sed "s/([0-9]\+) //g" | sed "s/\[[0-9]\+\]//g")
+  res=$(awk -F "|" -v s="$surah" -v a="$ayah" '$2 == s && $3 == a {print $4}' $file | eval "$remove_verse_number" | sed "s/\[[0-9]\+\]//g")
   echo "$res"
 }
 
@@ -108,7 +125,7 @@ get_verse_note() {
 
 get_note() {
   local res
-  res=$(awk -F '|' -v s="$surah" -v a="$ayah" '$2 == s && $3 == a {print $5 "\n"}' $file | sed "s/;;/\n\n/g" | sed "/::blank::/{N;d;}")
+  res=$(awk -F '|' -v s="$surah" -v a="$ayah" '$2 == s && $3 == a {print $5 "\n"}' $file | eval "$footnote_new_line" | eval "$footnote_del_blank_line")
   echo "$res"
 }
 
@@ -120,16 +137,12 @@ print_help() {
 # Parsing arguments
 ###########################################
 
-while getopts 'ahsv:' opt; do
+while getopts 'ahsv:i:' opt; do
   case "$opt" in
   a)
     all=1
     ;;
 
-  # h)
-  #   arg="$OPTARG"
-  #   echo "Processing option 'c' with '${OPTARG}' argument"
-  #   ;;
   s)
     simple_output=1
     surah=$2
@@ -143,6 +156,11 @@ while getopts 'ahsv:' opt; do
       echo -e "${RED}Error:${NC} There are only 6236 verses in the Noble Quran."
       exit 1
     fi
+    ;;
+
+  i)
+    get_surah_info "$OPTARG"
+    exit 0
     ;;
 
   h)
@@ -229,6 +247,8 @@ else
 fi
 
 if [[ -n $ayahs ]]; then
+  get_surah_name
+  echo
   echo "$ayahs"
   echo
   echo "Footnotes:"

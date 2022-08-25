@@ -1,0 +1,115 @@
+_index,_ayas,_start,_name,_tname,_ename,_type,_order,_rukus
+1,7,0,الفاتحة,Al-Faatiha,The Opening,Meccan,5,1
+2,286,7,البقرة,Al-Baqara,The Cow,Medinan,87,40
+3,200,293,آل عمران,Aal-i-Imraan,The Family of Imraan,Medinan,89,20
+4,176,493,النساء,An-Nisaa,The Women,Medinan,92,24
+5,120,669,المائدة,Al-Maaida,The Table,Medinan,112,16
+6,165,789,الأنعام,Al-An'aam,The Cattle,Meccan,55,20
+7,206,954,الأعراف,Al-A'raaf,The Heights,Meccan,39,24
+8,75,1160,الأنفال,Al-Anfaal,The Spoils of War,Medinan,88,10
+9,129,1235,التوبة,At-Tawba,The Repentance,Medinan,113,16
+10,109,1364,يونس,Yunus,Jonas,Meccan,51,11
+11,123,1473,هود,Hud,Hud,Meccan,52,10
+12,111,1596,يوسف,Yusuf,Joseph,Meccan,53,12
+13,43,1707,الرعد,Ar-Ra'd,The Thunder,Medinan,96,6
+14,52,1750,ابراهيم,Ibrahim,Abraham,Meccan,72,7
+15,99,1802,الحجر,Al-Hijr,The Rock,Meccan,54,6
+16,128,1901,النحل,An-Nahl,The Bee,Meccan,70,16
+17,111,2029,الإسراء,Al-Israa,The Night Journey,Meccan,50,12
+18,110,2140,الكهف,Al-Kahf,The Cave,Meccan,69,12
+19,98,2250,مريم,Maryam,Mary,Meccan,44,6
+20,135,2348,طه,Taa-Haa,Taa-Haa,Meccan,45,8
+21,112,2483,الأنبياء,Al-Anbiyaa,The Prophets,Meccan,73,7
+22,78,2595,الحج,Al-Hajj,The Pilgrimage,Medinan,103,10
+23,118,2673,المؤمنون,Al-Muminoon,The Believers,Meccan,74,6
+24,64,2791,النور,An-Noor,The Light,Medinan,102,9
+25,77,2855,الفرقان,Al-Furqaan,The Criterion,Meccan,42,6
+26,227,2932,الشعراء,Ash-Shu'araa,The Poets,Meccan,47,11
+27,93,3159,النمل,An-Naml,The Ant,Meccan,48,7
+28,88,3252,القصص,Al-Qasas,The Stories,Meccan,49,8
+29,69,3340,العنكبوت,Al-Ankaboot,The Spider,Meccan,85,7
+30,60,3409,الروم,Ar-Room,The Romans,Meccan,84,6
+31,34,3469,لقمان,Luqman,Luqman,Meccan,57,3
+32,30,3503,السجدة,As-Sajda,The Prostration,Meccan,75,3
+33,73,3533,الأحزاب,Al-Ahzaab,The Clans,Medinan,90,9
+34,54,3606,سبإ,Saba,Sheba,Meccan,58,6
+35,45,3660,فاطر,Faatir,The Originator,Meccan,43,5
+36,83,3705,يس,Yaseen,Yaseen,Meccan,41,5
+37,182,3788,الصافات,As-Saaffaat,Those drawn up in Ranks,Meccan,56,5
+38,88,3970,ص,Saad,The letter Saad,Meccan,38,5
+39,75,4058,الزمر,Az-Zumar,The Groups,Meccan,59,8
+40,85,4133,غافر,Al-Ghaafir,The Forgiver,Meccan,60,9
+41,54,4218,فصلت,Fussilat,Explained in detail,Meccan,61,6
+42,53,4272,الشورى,Ash-Shura,Consultation,Meccan,62,5
+43,89,4325,الزخرف,Az-Zukhruf,Ornaments of gold,Meccan,63,7
+44,59,4414,الدخان,Ad-Dukhaan,The Smoke,Meccan,64,3
+45,37,4473,الجاثية,Al-Jaathiya,Crouching,Meccan,65,4
+46,35,4510,الأحقاف,Al-Ahqaf,The Dunes,Meccan,66,4
+47,38,4545,محمد,Muhammad,Muhammad,Medinan,95,4
+48,29,4583,الفتح,Al-Fath,The Victory,Medinan,111,4
+49,18,4612,الحجرات,Al-Hujuraat,The Inner Apartments,Medinan,106,2
+50,45,4630,ق,Qaaf,The letter Qaaf,Meccan,34,3
+51,60,4675,الذاريات,Adh-Dhaariyat,The Winnowing Winds,Meccan,67,3
+52,49,4735,الطور,At-Tur,The Mount,Meccan,76,2
+53,62,4784,النجم,An-Najm,The Star,Meccan,23,3
+54,55,4846,القمر,Al-Qamar,The Moon,Meccan,37,3
+55,78,4901,الرحمن,Ar-Rahmaan,The Beneficent,Medinan,97,3
+56,96,4979,الواقعة,Al-Waaqia,The Inevitable,Meccan,46,3
+57,29,5075,الحديد,Al-Hadid,The Iron,Medinan,94,4
+58,22,5104,المجادلة,Al-Mujaadila,The Pleading Woman,Medinan,105,3
+59,24,5126,الحشر,Al-Hashr,The Exile,Medinan,101,3
+60,13,5150,الممتحنة,Al-Mumtahana,She that is to be examined,Medinan,91,2
+61,14,5163,الصف,As-Saff,The Ranks,Medinan,109,2
+62,11,5177,الجمعة,Al-Jumu'a,Friday,Medinan,110,2
+63,11,5188,المنافقون,Al-Munaafiqoon,The Hypocrites,Medinan,104,2
+64,18,5199,التغابن,At-Taghaabun,Mutual Disillusion,Medinan,108,2
+65,12,5217,الطلاق,At-Talaaq,Divorce,Medinan,99,2
+66,12,5229,التحريم,At-Tahrim,The Prohibition,Medinan,107,2
+67,30,5241,الملك,Al-Mulk,The Sovereignty,Meccan,77,2
+68,52,5271,القلم,Al-Qalam,The Pen,Meccan,2,2
+69,52,5323,الحاقة,Al-Haaqqa,The Reality,Meccan,78,2
+70,44,5375,المعارج,Al-Ma'aarij,The Ascending Stairways,Meccan,79,2
+71,28,5419,نوح,Nooh,Noah,Meccan,71,2
+72,28,5447,الجن,Al-Jinn,The Jinn,Meccan,40,2
+73,20,5475,المزمل,Al-Muzzammil,The Enshrouded One,Meccan,3,2
+74,56,5495,المدثر,Al-Muddaththir,The Cloaked One,Meccan,4,2
+75,40,5551,القيامة,Al-Qiyaama,The Resurrection,Meccan,31,2
+76,31,5591,الانسان,Al-Insaan,Man,Medinan,98,2
+77,50,5622,المرسلات,Al-Mursalaat,The Emissaries,Meccan,33,2
+78,40,5672,النبإ,An-Naba,The Announcement,Meccan,80,2
+79,46,5712,النازعات,An-Naazi'aat,Those who drag forth,Meccan,81,2
+80,42,5758,عبس,Abasa,He frowned,Meccan,24,1
+81,29,5800,التكوير,At-Takwir,The Overthrowing,Meccan,7,1
+82,19,5829,الإنفطار,Al-Infitaar,The Cleaving,Meccan,82,1
+83,36,5848,المطففين,Al-Mutaffifin,Defrauding,Meccan,86,1
+84,25,5884,الإنشقاق,Al-Inshiqaaq,The Splitting Open,Meccan,83,1
+85,22,5909,البروج,Al-Burooj,The Constellations,Meccan,27,1
+86,17,5931,الطارق,At-Taariq,The Morning Star,Meccan,36,1
+87,19,5948,الأعلى,Al-A'laa,The Most High,Meccan,8,1
+88,26,5967,الغاشية,Al-Ghaashiya,The Overwhelming,Meccan,68,1
+89,30,5993,الفجر,Al-Fajr,The Dawn,Meccan,10,1
+90,20,6023,البلد,Al-Balad,The City,Meccan,35,1
+91,15,6043,الشمس,Ash-Shams,The Sun,Meccan,26,1
+92,21,6058,الليل,Al-Lail,The Night,Meccan,9,1
+93,11,6079,الضحى,Ad-Dhuhaa,The Morning Hours,Meccan,11,1
+94,8,6090,الشرح,Ash-Sharh,The Consolation,Meccan,12,1
+95,8,6098,التين,At-Tin,The Fig,Meccan,28,1
+96,19,6106,العلق,Al-Alaq,The Clot,Meccan,1,1
+97,5,6125,القدر,Al-Qadr,"The Power, Fate",Meccan,25,1
+98,8,6130,البينة,Al-Bayyina,The Evidence,Medinan,100,1
+99,8,6138,الزلزلة,Az-Zalzala,The Earthquake,Medinan,93,1
+100,11,6146,العاديات,Al-Aadiyaat,The Chargers,Meccan,14,1
+101,11,6157,القارعة,Al-Qaari'a,The Calamity,Meccan,30,1
+102,8,6168,التكاثر,At-Takaathur,Competition,Meccan,16,1
+103,3,6176,العصر,Al-Asr,"The Declining Day, Epoch",Meccan,13,1
+104,9,6179,الهمزة,Al-Humaza,The Traducer,Meccan,32,1
+105,5,6188,الفيل,Al-Fil,The Elephant,Meccan,19,1
+106,4,6193,قريش,Quraish,Quraysh,Meccan,29,1
+107,7,6197,الماعون,Al-Maa'un,Almsgiving,Meccan,17,1
+108,3,6204,الكوثر,Al-Kawthar,Abundance,Meccan,15,1
+109,6,6207,الكافرون,Al-Kaafiroon,The Disbelievers,Meccan,18,1
+110,3,6213,النصر,An-Nasr,Divine Support,Medinan,114,1
+111,5,6216,المسد,Al-Masad,The Palm Fibre,Meccan,6,1
+112,4,6221,الإخلاص,Al-Ikhlaas,Sincerity,Meccan,22,1
+113,5,6225,الفلق,Al-Falaq,The Dawn,Meccan,20,1
+114,6,6230,الناس,An-Naas,Mankind,Meccan,21,1
