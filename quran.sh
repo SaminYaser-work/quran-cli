@@ -51,15 +51,30 @@ fi
 # Functions
 ###########################################
 
+check_ayah_exists() {
+  num_of_ayahs=$(awk -F, -v surah="$1" '$1 == surah {print $2}' $metadata)
+  if [[ $2 -gt $num_of_ayahs || $2 -lt 1 ]]; then
+    echo -e "${RED}Error:${NC} Surah $(get_surah_name_transliterated "$1") only has $num_of_ayahs ayahs."
+    exit 1
+  fi
+}
+
 check_surah_exists() {
-  if [[ $1 -gt 144 ]]; then
+  if [[ $1 -gt 114 || $1 -lt 1 ]]; then
     echo -e "${RED}Error:${NC} There are only 114 surahs in the Noble Quran."
     exit 1
   fi
 }
 
+# Get the transliterated name of the surah
+get_surah_name_transliterated() {
+  local res
+  res=$(awk -F, -v surah="$1" '$1 == surah {print $5}' "$metadata")
+  echo "$res"
+}
+
 # Get the title of the surah
-get_surah_name() {
+get_sruah_title() {
   # _index,_ayas,_start,_name,_tname,_ename,_type,_order,_rukus
 
   local res
@@ -109,7 +124,7 @@ get_full_notes() {
 # Get single ayah without verse number and references
 get_ayah_simple() {
   local res
-  res=$(awk -F "|" -v s="$surah" -v a="$ayah" '$2 == s && $3 == a {print $4}' $file | eval "$remove_verse_number" | sed "s/\[[0-9]\+\]//g")
+  res=$(awk -F "|" -v s="$1" -v a="$2" '$2 == s && $3 == a {print $4}' $file | eval "$remove_verse_number" | sed "s/\[[0-9]\+\]//g")
   echo "$res"
 }
 
@@ -152,9 +167,10 @@ while getopts 'ahsv:i:' opt; do
     ;;
 
   s)
-    simple_output=1
-    surah=$2
-    ayah=$3
+    check_surah_exists "$2"
+    check_ayah_exists "$2" "$3"
+    get_ayah_simple "$2" "$3"
+    exit 0
     ;;
 
   v)
@@ -223,13 +239,6 @@ if [[ $all -eq 1 ]]; then
   exit 0
 fi
 
-# simple output
-if [[ $simple_output -eq 1 ]]; then
-
-  get_ayah_simple
-  exit 0
-fi
-
 if [[ $output_verse -eq 1 ]]; then
   get_verse
   footnotes=$(get_verse_note)
@@ -255,7 +264,7 @@ else
 fi
 
 if [[ -n $ayahs ]]; then
-  get_surah_name
+  get_sruah_title
   echo
   echo "$ayahs"
   echo
