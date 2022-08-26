@@ -86,7 +86,7 @@ get_surah_title_by_verse() {
 }
 
 # Get the title of the surah
-get_sruah_title() {
+get_surah_title() {
   # _index,_ayas,_start,_name,_tname,_ename,_type,_order,_rukus
 
   local res
@@ -270,7 +270,7 @@ fi
 
 # The default output when no options are passed
 check_ayah_exists "$1" "$2"
-get_sruah_title "$1"
+get_surah_title "$1"
 echo
 get_ayah_of_a_surah "$1" "$2"
 print_footnotes "$1" "$2"
