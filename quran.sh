@@ -43,6 +43,8 @@
 
 file='./data/saheeh_english_fn.csv'
 metadata='./data/metadata.csv'
+bookmark_file='./data/bookmark.csv'
+
 RED='\033[0;31m'
 NC='\033[0m'
 BOLD=$(tput bold)
@@ -87,6 +89,9 @@ fi
 # Functions
 ###########################################
 
+# Error checking functions
+# --------------------------
+
 check_ayah_exists_in_a_surah() {
   num_of_ayahs=$(awk -F, -v surah="$1" '$1 == surah {print $2}' $metadata)
   if [[ $2 -gt $num_of_ayahs || $2 -lt 1 ]]; then
@@ -109,6 +114,40 @@ check_verse_exists() {
   fi
 }
 
+check_bookmark_file() {
+  if [[ ! -f $bookmark_file ]]; then
+    echo -e "${RED}Bookmark file doesn't exist!${NC}"
+    exit 1
+  fi
+
+  total_bookmarks=$(($(wc -l <$bookmark_file) - 1))
+
+  if [[ $total_bookmarks -lt 1 ]]; then
+    echo "No bookmarks found."
+    exit 1
+  fi
+}
+
+check_valid_bookmark() {
+  if [[ $1 -gt $(($(wc -l <$bookmark_file) - 1)) || $1 -lt 1 ]]; then
+    echo -e "${RED}Error:${NC} Invalid bookmark number."
+    exit 1
+  fi
+}
+
+# Get functions
+# ----------------
+
+# Metadata:  _index,_ayas,_start,_name,_tname,_ename,_type,_order,_rukus
+# Column No:    1      2     3     4      5      6      7     8      9
+
+# Get the title of the surah
+get_surah_title() {
+  local res
+  res=$(awk -F, -v surah="$1" '$1 == surah {print $4 " | " $5 " ("$6")"}' "$metadata")
+  echo "$res"
+}
+
 # Get the transliterated name of the surah
 get_surah_name_transliterated() {
   local res
@@ -122,13 +161,50 @@ get_surah_title_by_verse() {
   echo "$res"
 }
 
-# Get the title of the surah
-get_surah_title() {
-  # _index,_ayas,_start,_name,_tname,_ename,_type,_order,_rukus
+save_bookmark() {
+  if [[ ! -f $bookmark_file ]]; then
+    echo "No bookmark file found. Creating a new one in $bookmark_file..."
+    if touch $bookmark_file; then
+      echo "Created new bookmark file at $bookmark_file"
+      echo "Surah|Ayah|Date" >$bookmark_file
+    else
+      echo "Failed to create bookmark file at $bookmark_file."
+      exit 1
+    fi
+  fi
 
-  local res
-  res=$(awk -F, -v surah="$surah" '$1 == surah {print $4 " | " $5 " ("$6")"}' "$metadata")
-  echo "$res"
+  echo "$1|$2|$(date)" >>$bookmark_file &&
+    echo "Bookmark saved." && exit 0
+
+  echo "Failed to write to bookmark file at $bookmark_file."
+  exit 1
+}
+
+show_bookmarks() {
+  check_bookmark_file
+  column -t -s '|' $bookmark_file
+}
+
+select_bookmark() {
+  check_bookmark_file
+  check_valid_bookmark "$1"
+
+  s=$(awk -F '|' -v b="$1" 'NR==(b+1) {print $1}' $bookmark_file)
+  a=$(awk -F '|' -v b="$1" 'NR==(b+1) {print $2}' $bookmark_file)
+  get_surah_title "$s"
+  echo
+  get_ayah_of_a_surah "$s" "$a"
+  print_footnotes "$s" "$a"
+}
+
+delete_bookmark() {
+  check_bookmark_file
+  check_valid_bookmark "$1"
+
+  x=$(($1 + 1))
+
+  sed -i "${x}d" $bookmark_file
+  echo "Bookmark deleted."
 }
 
 # Prints full information about the surah
@@ -191,13 +267,13 @@ get_verse() {
 
 get_verse_note() {
   local res
-  res=$(awk -F "|" -v a="$ayah" '$1 == a {print $5 "\n"}' $file | eval "$footnote_new_line" | eval "$footnote_del_blank_line")
+  res=$(awk -F "|" -v a="$1" '$1 == a {print $5 "\n"}' $file | eval "$footnote_new_line" | eval "$footnote_del_blank_line")
   echo "$res"
 }
 
-get_note() {
+get_footnotes_of_ayah_in_a_surah() {
   local res
-  res=$(awk -F '|' -v s="$surah" -v a="$ayah" '$2 == s && $3 == a {print $5 "\n"}' $file | eval "$footnote_new_line" | eval "$footnote_del_blank_line")
+  res=$(awk -F '|' -v s="$1" -v a="$2" '$2 == s && $3 == a {print $5 "\n"}' $file | eval "$footnote_new_line" | eval "$footnote_del_blank_line")
   echo "$res"
 }
 
@@ -208,7 +284,11 @@ get_footnote_header() {
 }
 
 print_footnotes() {
-  footnotes=$(get_verse_note "$1")
+  if [[ "$#" -eq 1 ]]; then
+    footnotes=$(get_verse_note "$1")
+  else
+    footnotes=$(get_footnotes_of_ayah_in_a_surah "$1" "$2")
+  fi
   if [[ -n $footnotes ]]; then
     get_footnote_header
     echo "$footnotes"
@@ -225,7 +305,7 @@ print_help() {
 # Parsing arguments
 ###########################################
 
-while getopts 'ahsv:i:' opt; do
+while getopts 'ahslv:i:B:b:d:' opt; do
   case "$opt" in
   h)
     print_help
@@ -257,6 +337,26 @@ while getopts 'ahsv:i:' opt; do
   i)
     check_surah_exists "$OPTARG"
     get_surah_info "$OPTARG"
+    exit 0
+    ;;
+
+  B)
+    save_bookmark "$OPTARG" "$3"
+    exit 0
+    ;;
+
+  b)
+    select_bookmark "$OPTARG"
+    exit 0
+    ;;
+
+  d)
+    delete_bookmark "$OPTARG"
+    exit 0
+    ;;
+
+  l)
+    show_bookmarks
     exit 0
     ;;
 
