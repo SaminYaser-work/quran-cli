@@ -23,7 +23,6 @@ ayahLast=$3
 all=0
 no_footnote=0
 range_given=0
-simple_output=0
 output_verse=0
 
 if [[ -n $ayahLast ]]; then
@@ -66,10 +65,23 @@ check_surah_exists() {
   fi
 }
 
+check_verse_exists() {
+  if [[ $1 -gt 6236 || $1 -lt 1 ]]; then
+    echo -e "${RED}Error:${NC} There are only 6236 verses in the Noble Quran."
+    exit 1
+  fi
+}
+
 # Get the transliterated name of the surah
 get_surah_name_transliterated() {
   local res
   res=$(awk -F, -v surah="$1" '$1 == surah {print $5}' "$metadata")
+  echo "$res"
+}
+
+get_surah_title_by_verse() {
+  local res
+  res=$(awk -F, -v verse="$1" '$3+1 > verse {print f;exit;} {f=$4 " | " $5 " ("$6")"}' "$metadata") # Prints the line before the match is found
   echo "$res"
 }
 
@@ -128,15 +140,15 @@ get_ayah_simple() {
   echo "$res"
 }
 
-get_ayah() {
+get_ayah_of_a_surah() {
   local res
-  res=$(awk -F "|" -v s="$surah" -v a="$ayah" '$2 == s && $3 == a {print $4 "\n"}' $file)
+  res=$(awk -F "|" -v s="$1" -v a="$2" '$2 == s && $3 == a {print $4 "\n"}' $file)
   echo "$res"
 }
 
 get_verse() {
   local res
-  res=$(awk -F "|" -v a="$ayah" '$1 == a {print $4 "\n"}' $file | eval "$remove_verse_number")
+  res=$(awk -F "|" -v a="$1" '$1 == a {print $4 "\n"}' $file | eval "$remove_verse_number")
   echo "$res"
 }
 
@@ -152,8 +164,20 @@ get_note() {
   echo "$res"
 }
 
+print_footnotes() {
+  footnotes=$(get_verse_note "$1")
+  if [[ -n $footnotes ]]; then
+    echo
+    echo "Footnotes:"
+    echo ----------
+    echo "$footnotes"
+  fi
+  exit 0
+}
+
+# TODO: Print a help message
 print_help() {
-  printf "Usage: quran.sh [OPTION]\nUnder construction"
+  printf "Usage: Under construction\nFor now, please refer to the README.md file on GitHub.\n"
 }
 
 ###########################################
@@ -162,7 +186,7 @@ print_help() {
 
 while getopts 'ahsv:i:' opt; do
   case "$opt" in
-  a)
+  a) # TODO: Needs more work
     all=1
     ;;
 
@@ -174,12 +198,12 @@ while getopts 'ahsv:i:' opt; do
     ;;
 
   v)
-    output_verse=1
-    ayah=${OPTARG}
-    if [[ ayah -gt 6236 ]]; then
-      echo -e "${RED}Error:${NC} There are only 6236 verses in the Noble Quran."
-      exit 1
-    fi
+    check_verse_exists "$OPTARG"
+    get_surah_title_by_verse "$OPTARG"
+    echo
+    get_verse "$OPTARG"
+    print_footnotes "$OPTARG"
+    exit 0
     ;;
 
   i)
@@ -200,7 +224,6 @@ while getopts 'ahsv:i:' opt; do
     ;;
 
   ?)
-    echo -e "Invalid command option."
     print_help
     exit 1
     ;;
@@ -239,46 +262,15 @@ if [[ $all -eq 1 ]]; then
   exit 0
 fi
 
-if [[ $output_verse -eq 1 ]]; then
-  get_verse
-  footnotes=$(get_verse_note)
-
-  if [[ -n $footnotes ]]; then
-    echo
-    echo "Footnotes:"
-    echo ----------
-    echo "$footnotes"
-  fi
-  exit 0
-fi
-
 # Get the whole surah and footnotes
 if [[ -z $ayah ]]; then
   ayahs=$(get_full_surah)
   footnotes=$(get_full_notes)
-
-# Get specific ayah and footnotes
-else
-  ayahs=$(get_ayah)
-  footnotes=$(get_note)
 fi
 
-if [[ -n $ayahs ]]; then
-  get_sruah_title
-  echo
-  echo "$ayahs"
-  echo
-  echo "Footnotes:"
-  echo ----------
-
-  if [[ -z $footnotes ]]; then
-    echo "No footnotes available"
-  else
-    echo "$footnotes"
-  fi
-  exit 0
-
-else
-  echo -e "${RED}Error:${NC} Ayah doens't exist for that surah "
-  exit 1
-fi
+# The default output when no options are passed
+check_ayah_exists "$1" "$2"
+get_sruah_title "$1"
+echo
+get_ayah_of_a_surah "$1" "$2"
+print_footnotes "$1" "$2"
