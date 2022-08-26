@@ -1,4 +1,41 @@
-#!/bin/bash
+#!/usr/bin/env bash
+########################################################################################################
+#                                                                                            ..    .   #
+#                                                                                      x .d88"    @88> #
+#                x.    .        .u    .                  u.    u.                       5888R     %8P  #
+#     .u@u     .@88k  z88u    .d88B :@8c        u      x@88k u@88c.                .    '888R      .   #
+#  .zWF8888bx ~"8888 ^8888   ="8888f8888r    us888u.  ^"8888""8888"           .udR88N    888R    .@88u #
+# .888  9888    8888  888R     4888>'88"  .@88 "8888"   8888  888R           <888'888k   888R   ''888E`#
+# I888  9888    8888  888R     4888> '    9888  9888    8888  888R           9888 'Y"    888R     888E #
+# I888  9888    8888  888R     4888>      9888  9888    8888  888R           9888        888R     888E #
+# I888  9888    8888 ,888B .  .d888L .+   9888  9888    8888  888R  88888888 9888        888R     888E #
+# `888Nx?888   "8888Y 8888"   ^"8888*"    9888  9888   "*88*" 8888" 88888888 ?8888u../  .888B .   888& #
+#  "88" '888    `Y"   'YP        "Y"      "888*""888"    ""   'Y"             "8888P'   ^*888%    R888"#
+#        88E                               ^Y"   ^Y'                            "P'       "%       ""  #
+#        98>                                                                                           #
+#        '8                                                                                            #
+#         `                                                                                            #
+#                                                                                                      #
+#      Get the English translation of the verbatim word of Allah, the only God worthy of worship,      #
+#                                  Right in your terminal.                                             #
+########################################################################################################
+
+# Github: https://github.com/SaminYaser-work/quran-cli
+#
+#
+# Licensed under GNU GENERAL PUBLIC LICENSE Version 3 (GPLv3)
+#
+# Copyright (C) 2022 Samin Yaser
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 
 ###########################################
 # Variables
@@ -50,7 +87,7 @@ fi
 # Functions
 ###########################################
 
-check_ayah_exists() {
+check_ayah_exists_in_a_surah() {
   num_of_ayahs=$(awk -F, -v surah="$1" '$1 == surah {print $2}' $metadata)
   if [[ $2 -gt $num_of_ayahs || $2 -lt 1 ]]; then
     echo -e "${RED}Error:${NC} Surah $(get_surah_name_transliterated "$1") only has $num_of_ayahs ayahs."
@@ -203,7 +240,7 @@ while getopts 'ahsv:i:' opt; do
 
   s)
     check_surah_exists "$2"
-    check_ayah_exists "$2" "$3"
+    check_ayah_exists_in_a_surah "$2" "$3"
     get_ayah_simple "$2" "$3"
     exit 0
     ;;
@@ -242,36 +279,13 @@ shift "$((OPTIND - 1))"
 ###########################################
 
 # Printing full Qur'an
-if [[ $all -eq 1 ]]; then
-  ayahs=$(get_all_ayahs)
-  footnotes=$(get_all_notes)
-
-  # paste <(echo "$ayahs") <(echo "$footnotes") | column -s $'\t' -t
-
-  #   cat <<-EOF | column --separator '|' \
-  #     --table \
-  #     --table-columns C1,C2 \
-  #     --table-wrap C1
-  #       $(get_full_quran)
-  # EOF
-
-  ayahs=$(get_all_ayahs | fold -w 50)
-  footnotes=$(get_all_notes | fold -w 30 -s)
-  # column --separator
-  echo "$ayahs"
-
-  # pr "$ayahs" "$footnotes"
-  # echo "$ayahs" | pr -m -T | less
-  # pr -w 70 -m -t <(echo "$ayahs") <(echo "$footnotes") | less
-
-  # get_full_quran
-  exit 0
-fi
+# if [[ $all -eq 1 ]]; then
+# fi
 
 # The default output when no options are passed
 
-# Get the whole surah and footnotes
 if [[ -z $2 ]]; then
+  # Prints a full surah
   check_surah_exists "$1"
   get_surah_title "$1"
   echo
@@ -280,8 +294,8 @@ if [[ -z $2 ]]; then
   get_full_notes "$1"
 
 else
-
-  check_ayah_exists "$1" "$2"
+  # Print a specific ayah of a surah
+  check_ayah_exists_in_a_surah "$1" "$2"
   get_surah_title "$1"
   echo
   get_ayah_of_a_surah "$1" "$2"
