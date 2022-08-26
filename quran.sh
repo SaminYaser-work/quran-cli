@@ -123,13 +123,13 @@ get_full_quran() {
 
 get_full_surah() {
   local res
-  res=$(awk -F "|" -v s="$surah" '$2 == s {print $4"\n"}' $file)
+  res=$(awk -F "|" -v s="$1" '$2 == s {print $4"\n"}' $file)
   echo "$res"
 }
 
 get_full_notes() {
   local res
-  res=$(awk -F '|' -v s="$surah" '$2 == s {print $5"\n"}' "$file" | sed "s/;;/\n\n/g" | sed "/::blank::/{N;d;}")
+  res=$(awk -F '|' -v s="$1" '$2 == s {print $5"\n"}' "$file" | sed "s/;;/\n\n/g" | sed "/::blank::/{N;d;}")
   echo "$res"
 }
 
@@ -164,12 +164,16 @@ get_note() {
   echo "$res"
 }
 
+get_footnote_header() {
+  echo
+  echo "Footnotes:"
+  echo ----------
+}
+
 print_footnotes() {
   footnotes=$(get_verse_note "$1")
   if [[ -n $footnotes ]]; then
-    echo
-    echo "Footnotes:"
-    echo ----------
+    get_footnote_header
     echo "$footnotes"
   fi
   exit 0
@@ -186,8 +190,15 @@ print_help() {
 
 while getopts 'ahsv:i:' opt; do
   case "$opt" in
+  h)
+    print_help
+    exit 0
+    ;;
+
   a) # TODO: Needs more work
     all=1
+    echo "This feature is not yet implemented."
+    exit 1
     ;;
 
   s)
@@ -209,11 +220,6 @@ while getopts 'ahsv:i:' opt; do
   i)
     check_surah_exists "$OPTARG"
     get_surah_info "$OPTARG"
-    exit 0
-    ;;
-
-  h)
-    print_help
     exit 0
     ;;
 
@@ -262,15 +268,22 @@ if [[ $all -eq 1 ]]; then
   exit 0
 fi
 
-# Get the whole surah and footnotes
-if [[ -z $ayah ]]; then
-  ayahs=$(get_full_surah)
-  footnotes=$(get_full_notes)
-fi
-
 # The default output when no options are passed
-check_ayah_exists "$1" "$2"
-get_surah_title "$1"
-echo
-get_ayah_of_a_surah "$1" "$2"
-print_footnotes "$1" "$2"
+
+# Get the whole surah and footnotes
+if [[ -z $2 ]]; then
+  check_surah_exists "$1"
+  get_surah_title "$1"
+  echo
+  get_full_surah "$1"
+  get_footnote_header
+  get_full_notes "$1"
+
+else
+
+  check_ayah_exists "$1" "$2"
+  get_surah_title "$1"
+  echo
+  get_ayah_of_a_surah "$1" "$2"
+  print_footnotes "$1" "$2"
+fi
