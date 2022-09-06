@@ -50,7 +50,9 @@ NC='\033[0m'
 BOLD=$(tput bold)
 
 remove_verse_number='sed "s/([0-9]\+) //g"'
-footnote_new_line='sed "s/;;/\n\n/g"'
+remove_footnote_number='sed "s/\[[0-9]\+\]//g"'
+insert_new_line='sed "s/;;/\n\n/g"'
+replace_blank_notes='sed "s/::blank::/No notes available/g"'
 footnote_del_blank_line='sed "/::blank::/{N;d;}"'
 
 # Arguments
@@ -222,15 +224,14 @@ get_all_ayahs() {
 
 get_all_notes() {
   local res
-  # res=$(awk -F '|' '{print $5"\n"}' "$file" | sed "s/;;/\n\n/g" | sed "s/::blank::/No notes available/g")
-  res=$(awk -F '|' '{print $5"\n"}' "$file" | sed "s/;;/ /g" | sed "s/::blank::/No notes available/g")
+  res=$(awk -F '|' '{print $5"\n"}' "$file" | eval "$insert_new_line" | eval "$replace_blank_notes")
   echo "$res"
 }
 
 # TODO: Format output nicely
 get_full_quran() {
   local res
-  res=$(awk -F '|' '{print $4"|"$5}' "$file" | sed "s/;;/ /g" | sed "s/::blank::/No notes available/g")
+  res=$(awk -F '|' '{print $4"|"$5}' "$file" | sed "s/;;/ /g" | eval "$replace_blank_notes")
   echo "$res"
 }
 
@@ -242,14 +243,14 @@ get_full_surah() {
 
 get_full_notes() {
   local res
-  res=$(awk -F '|' -v s="$1" '$2 == s {print $5"\n"}' "$file" | sed "s/;;/\n\n/g" | sed "/::blank::/{N;d;}")
+  res=$(awk -F '|' -v s="$1" '$2 == s {print $5"\n"}' "$file" | eval "$insert_new_line" | eval "$footnote_del_blank_line")
   echo "$res"
 }
 
 # Get single ayah without verse number and references
 get_ayah_simple() {
   local res
-  res=$(awk -F "|" -v s="$1" -v a="$2" '$2 == s && $3 == a {print $4}' $file | eval "$remove_verse_number" | sed "s/\[[0-9]\+\]//g")
+  res=$(awk -F "|" -v s="$1" -v a="$2" '$2 == s && $3 == a {print $4}' $file | eval "$remove_verse_number" | eval "$remove_footnote_number")
   echo "$res"
 }
 
@@ -267,13 +268,13 @@ get_verse() {
 
 get_verse_note() {
   local res
-  res=$(awk -F "|" -v a="$1" '$1 == a {print $5 "\n"}' $file | eval "$footnote_new_line" | eval "$footnote_del_blank_line")
+  res=$(awk -F "|" -v a="$1" '$1 == a {print $5 "\n"}' $file | eval "$insert_new_line" | eval "$footnote_del_blank_line")
   echo "$res"
 }
 
 get_footnotes_of_ayah_in_a_surah() {
   local res
-  res=$(awk -F '|' -v s="$1" -v a="$2" '$2 == s && $3 == a {print $5 "\n"}' $file | eval "$footnote_new_line" | eval "$footnote_del_blank_line")
+  res=$(awk -F '|' -v s="$1" -v a="$2" '$2 == s && $3 == a {print $5 "\n"}' $file | eval "$insert_new_line" | eval "$footnote_del_blank_line")
   echo "$res"
 }
 
