@@ -247,6 +247,18 @@ get_full_notes() {
   echo "$res"
 }
 
+get_ayahs_in_range() {
+  local res
+  res=$(awk -F '|' -v s="$1" -v a1="$2" -v a2="$3" '$2 == s && $3 >= a1 && $3 <= a2 {print $4"\n"}' "$file")
+  echo "$res"
+}
+
+get_footnotes_in_range() {
+  local res
+  res=$(awk -F '|' -v s="$1" -v a1="$2" -v a2="$3" '$2 == s && $3 >= a1 && $3 <= a2 {print $5"\n"}' "$file" | eval "$insert_new_line" | eval "$footnote_del_blank_line")
+  echo "$res"
+}
+
 # Get single ayah without verse number and references
 get_ayah_simple() {
   local res
@@ -297,16 +309,25 @@ print_footnotes() {
   exit 0
 }
 
+print_footnotes_in_range() {
+  footnotes=$(get_footnotes_in_range "$1" "$2" "$3")
+  if [[ -n $footnotes ]]; then
+    get_footnote_header
+    echo "$footnotes"
+  fi
+  exit 0
+}
+
 # TODO: Print a help message
 print_help() {
-  printf "Usage: Under construction\nFor now, please refer to the README.md file on GitHub.\n"
+  printf "Usage: Under construction\nFor now, please refer to the README.md file on GitHub.\nhttps://github.com/SaminYaser-work/quran-cli"
 }
 
 ###########################################
 # Parsing arguments
 ###########################################
 
-while getopts 'ahslv:i:B:b:d:' opt; do
+while getopts 'ahslv:i:B:b:d:r:' opt; do
   case "$opt" in
   h)
     print_help
@@ -338,6 +359,18 @@ while getopts 'ahslv:i:B:b:d:' opt; do
   i)
     check_surah_exists "$OPTARG"
     get_surah_info "$OPTARG"
+    exit 0
+    ;;
+
+  r)
+    check_surah_exists "$2"
+    check_ayah_exists_in_a_surah "$2" "$3"
+    check_ayah_exists_in_a_surah "$2" "$4"
+
+    get_surah_title "$2"
+    echo
+    get_ayahs_in_range "$2" "$3" "$4"
+    print_footnotes_in_range "$2" "$3" "$4"
     exit 0
     ;;
 
