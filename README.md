@@ -9,7 +9,7 @@ Get the English translation of the verbatim word of Allah, the only God worthy o
 
 ### Examples:
 ```
-$ ./quran.sh 1 1
+❯ ./quran.sh 1 1
 الفاتحة | Al-Faatiha (The Opening)
 
 (1) In the name of Allāh,[2] the Entirely Merciful, the Especially Merciful.[3]
@@ -23,7 +23,7 @@ Footnotes:
 
 Omit the ayah to print the full surah with footnotes.
 ```
-$ ./quran.sh 1
+❯ ./quran.sh 1
 الفاتحة | Al-Faatiha (The Opening)
 
 (1) In the name of Allāh,[2] the Entirely Merciful, the Especially Merciful.[3]
@@ -53,7 +53,7 @@ Footnotes:
 
 `-s` flag simply outputs an Ayah. No verse number or footnotes. Good for piping to other programs.
 ```
-$ ./quran.sh -s 21 35
+❯ ./quran.sh -s 21 35
 Every soul will taste death. And We test you with evil and with good as trial; and to Us you will be returned.
 
 $ ./quran.sh -s 2 1 | figlet
@@ -65,9 +65,27 @@ $ ./quran.sh -s 2 1 | figlet
                |/                         |/                                
 
 ```
-Print an Ayah by verse number (independently of surah number) using the `-v` flag.
+
+with `-r` flag, you can specify a range of verses.
 ```
-$ ./quran.sh -v 10
+❯ ./quran.sh -r 3 1 2
+آل عمران | Aal-i-Imraan (The Family of Imraan)
+
+(1) Alif, Lām, Meem.[113]
+
+(2) Allāh - there is no deity except Him, the Ever-Living, the Self-Sustaining.[114]
+
+Footnotes:
+----------
+[113]- See footnote to 2:1.
+
+[114]- See footnotes to 2:255.
+```
+
+Print an Ayah by verse number (independently of surah number) using the `-v` flag.
+
+```
+❯ ./quran.sh -v 10
 Who believe in the unseen, establish prayer,[9] and spend out of what We[10] have provided for them,
 
 Footnotes:
@@ -78,7 +96,7 @@ Footnotes:
 ```
 `-i` flag prints full information about a Surah.
 ```
-$ ./quran.sh -i 18
+❯ ./quran.sh -i 18
 Index: 18
 Number of Ayahs: 110
 Starting Verse Number: 2141
@@ -88,4 +106,30 @@ Name (Translation): The Cave
 Type: Meccan
 Order: 69
 Number of Rukūʿ: 12
+```
+
+### Bookmark
+Save an Ayah of a Surah with `-B` flag.
+```
+❯ ./quran.sh -B 1 1
+Bookmark saved.
+```
+Then list all the saved bookmarks with `-l` flag.
+```
+❯ ./quran.sh -l
+Surah  Ayah  Date
+1      1     Tue Sep  6 07:38:28 PM +06 2022
+```
+Finally, select and print that bookmark with `-b` flag.
+```
+❯ ./quran.sh -b 1
+الفاتحة | Al-Faatiha (The Opening)
+
+(1) In the name of Allāh,[2] the Entirely Merciful, the Especially Merciful.[3]
+
+Footnotes:
+----------
+[2]- Allāh is a proper name belonging only to the one Almighty God, Creator and Sustainer of the heavens and the earth and all that is within them, the Eternal and Absolute, to whom alone all worship is due.
+
+[3]- Ar-Raḥmān and ar-Raḥeem are two names of Allāh derived from the word "raḥmah" (mercy) . In Arabic grammar both are intensive forms of "merciful" (i.e., extremely merciful) . A complimentary and comprehensive meaning is intended by using both together. Raḥmān is used only to describe Allāh, while raḥeem might be used to describe a person as well. The Prophet (ﷺ) was described in the Qur’ān as raḥeem. Raḥmān is above the human level (i.e., intensely merciful) . Since one usually understands intensity to be something of short duration, Allāh describes Himself also as raḥeem (i.e., continually merciful) . Raḥmān also carries a wider meaning - merciful to all creation. Justice is a part of this mercy. Raḥeem includes the concept of speciality - especially and specifically merciful to the believers. Forgiveness is a part of this mercy. In addition, Raḥmān is adjectival, referring to an attribute of Allāh and is part of His essence. Raḥeem is verbal, indicating what He does: i.e., bestowing and implementing mercy.
 ```
