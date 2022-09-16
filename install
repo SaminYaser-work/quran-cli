@@ -1,0 +1,24 @@
+#!/bin/bash
+
+data_path="$HOME/.local/share/quran-cli"
+bookmark_file="$HOME/.local/share/quran-cli/data/bookmark.csv"
+bin_path="$HOME/.local/bin"
+
+echo "quran-cli Installation Script"
+echo "============================="
+
+echo "Cloning the repository..."
+git clone https://github.com/SaminYaser-work/quran-cli.git ~/
+
+echo "Installing..."
+cp ~/quran-cli/quran "$bin_path"
+
+if [[ -f "$data_path" ]]; then
+    cp -r ~/quran-cli/data ~/.local/share/quran-cli/
+else
+    mkdir -p "$data_path"
+    cp -r ~/quran-cli/data "$data_path"
+fi
+
+echo "Cleaning up..."
+rm -rf ~/quran-cli
