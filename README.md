@@ -2,6 +2,12 @@
 
 Get the English translation of the verbatim word of Allah, the only God worthy of worship, right in your terminal.
 
+## Installation
+
+```
+curl https://raw.githubusercontent.com/SaminYaser-work/quran-cli/master/install | sh
+```
+
 ## Usage
 ```bash
 ./quran.sh <surah number> [verse number]
