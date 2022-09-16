@@ -45,12 +45,28 @@ file='./data/saheeh_english_fn.csv'
 metadata='./data/metadata.csv'
 bookmark_file='./data/bookmark.csv'
 
-RED='\033[0;31m'
-NC='\033[0m'
-BOLD=$(tput bold)
+# Styling
+if [ -x /usr/bin/tput ] && tput setaf 1 &>/dev/null; then
+  BOLD=$(tput bold)
+  RESET=$(tput sgr0)
+  UNDERLINE=$(tput smul)
+  NOUNDERLINE=$(tput rmul)
+  RED=$(tput setaf 1)
+  NC=$(tput sgr0)
+else
+  BOLD="\033[1m"
+  UNDERLINE="\033[4m"
+  NOUNDERLINE="\033[0m"
+  RESET="\033[0m"
+  RED='\033[0;31m' # Red
+  NC='\033[0m'
+fi
 
+# Sed replacements
 remove_verse_number='sed "s/([0-9]\+) //g"'
 remove_footnote_number='sed "s/\[[0-9]\+\]//g"'
+verse_number_in_bold='sed "s/\(([0-9]\+)\)/${BOLD}\1${RESET}/g"'
+footnote_number_in_italics='sed "s/\([[0-9]\+]\)/${UNDERLINE}\1${NOUNDERLINE}/g"'
 insert_new_line='sed "s/;;/\n\n/g"'
 replace_blank_notes='sed "s/::blank::/No notes available/g"'
 footnote_del_blank_line='sed "/::blank::/{N;d;}"'
@@ -93,7 +109,6 @@ fi
 
 # Error checking functions
 # --------------------------
-
 check_ayah_exists_in_a_surah() {
   num_of_ayahs=$(awk -F, -v surah="$1" '$1 == surah {print $2}' $metadata)
   if [[ $2 -gt $num_of_ayahs || $2 -lt 1 ]]; then
@@ -140,27 +155,35 @@ check_valid_bookmark() {
 # Get functions
 # ----------------
 
-# Metadata:  _index,_ayas,_start,_name,_tname,_ename,_type,_order,_rukus
+display_center() {
+  columns="$(tput cols)"
+  while IFS= read -r line; do
+    printf "%*s\n" $(((${#line} + columns) / 2)) "$line"
+  done <"$1"
+}
+
+# Metadata : _index,_ayas,_start,_name,_tname,_ename,_type,_order,_rukus
 # Column No:    1      2     3     4      5      6      7     8      9
 
-# Get the title of the surah
+# Get the title (in English, transliteration & Arabic) of the surah
 get_surah_title() {
   local res
   res=$(awk -F, -v surah="$1" '$1 == surah {print $4 " | " $5 " ("$6")"}' "$metadata")
-  echo "$res"
+  # echo -e "${BOLD}$res${RESET}"
+  display_center <(echo -e "${UNDERLINE}${BOLD}$res${RESET}${NOUNDERLINE}")
 }
 
 # Get the transliterated name of the surah
 get_surah_name_transliterated() {
   local res
   res=$(awk -F, -v surah="$1" '$1 == surah {print $5}' "$metadata")
-  echo "$res"
+  echo -e "${BOLD}$res${RESET}"
 }
 
 get_surah_title_by_verse() {
   local res
   res=$(awk -F, -v verse="$1" '$3+1 > verse {print f;exit;} {f=$4 " | " $5 " ("$6")"}' "$metadata") # Prints the line before the match is found
-  echo "$res"
+  display_center <(echo -e "${UNDERLINE}${BOLD}$res${RESET}${NOUNDERLINE}")
 }
 
 save_bookmark() {
@@ -259,8 +282,8 @@ get_footnotes_in_range() {
   echo "$res"
 }
 
-# Get single ayah without verse number and references
-get_ayah_simple() {
+# Get a single ayah without verse number and references
+get_ayah_of_a_surah_simple() {
   local res
   res=$(awk -F "|" -v s="$1" -v a="$2" '$2 == s && $3 == a {print $4}' $file | eval "$remove_verse_number" | eval "$remove_footnote_number")
   echo "$res"
@@ -268,13 +291,13 @@ get_ayah_simple() {
 
 get_ayah_of_a_surah() {
   local res
-  res=$(awk -F "|" -v s="$1" -v a="$2" '$2 == s && $3 == a {print $4 "\n"}' $file)
-  echo "$res"
+  res=$(awk -F "|" -v s="$1" -v a="$2" '$2 == s && $3 == a {print $4 "\n"}' $file | eval "$verse_number_in_bold" | eval "$footnote_number_in_italics")
+  echo -e "$res"
 }
 
 get_verse() {
   local res
-  res=$(awk -F "|" -v a="$1" '$1 == a {print $4 "\n"}' $file | eval "$remove_verse_number")
+  res=$(awk -F "|" -v a="$1" '$1 == a {print $4 "\n"}' $file | eval "$verse_number_in_bold" | eval "$footnote_number_in_italics")
   echo "$res"
 }
 
@@ -292,8 +315,8 @@ get_footnotes_of_ayah_in_a_surah() {
 
 get_footnote_header() {
   echo
-  echo "Footnotes:"
-  echo ----------
+  echo -e "${UNDERLINE}Footnotes:${NOUNDERLINE}"
+  echo
 }
 
 print_footnotes() {
@@ -343,7 +366,7 @@ while getopts 'ahslv:i:B:b:d:r:' opt; do
   s)
     check_surah_exists "$2"
     check_ayah_exists_in_a_surah "$2" "$3"
-    get_ayah_simple "$2" "$3"
+    get_ayah_of_a_surah_simple "$2" "$3"
     exit 0
     ;;
 
