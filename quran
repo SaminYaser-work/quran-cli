@@ -41,9 +41,10 @@
 # Variables
 ###########################################
 
-file='./data/saheeh_english_fn.csv'
-metadata='./data/metadata.csv'
-bookmark_file='./data/bookmark.csv'
+data_path="$HOME/.local/share/quran-cli/data"
+file="$data_path/saheeh_english_fn.csv"
+metadata="$data_path/metadata.csv"
+bookmark_file="$data_path/bookmark.csv"
 
 # Styling
 if [ -x /usr/bin/tput ] && tput setaf 1 &>/dev/null; then
