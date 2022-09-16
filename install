@@ -8,7 +8,7 @@ echo "quran-cli Installation Script"
 echo "============================="
 
 echo "Cloning the repository..."
-git clone https://github.com/SaminYaser-work/quran-cli.git ~/
+git clone https://github.com/SaminYaser-work/quran-cli.git ~/quran-cli
 
 echo "Installing..."
 cp ~/quran-cli/quran "$bin_path"
