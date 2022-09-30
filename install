@@ -13,6 +13,7 @@ git clone https://github.com/SaminYaser-work/quran-cli.git ~/quran-cli
 echo "Installing..."
 cp ~/quran-cli/quran "$bin_path"
 
+#TODO: backup old bookmark file if exists
 if [[ -f "$data_path" ]]; then
     cp -r ~/quran-cli/data ~/.local/share/quran-cli/
 else
