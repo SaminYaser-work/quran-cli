@@ -407,7 +407,7 @@ shift "$((OPTIND - 1))"
 ###########################################
 
 # Show help message if no arguments are passed or if '-h' flag is given
-if [[ "$#" -eq 0 || show_help -eq 1 ]]; then
+if [[ $show_help -eq 1 || -z $surah ]]; then
   print_help
   exit 0
 fi
@@ -419,9 +419,15 @@ if [[ $info_mode -eq 1 ]]; then
   exit 0
 fi
 
+# Checking if the surah number is valid
+if [[ $verse_mode -eq 0 ]]; then
+  check_surah_exists "$surah"
+else
+  check_verse_exists "$verse_number"
+fi
+
 # Range mode: Print ayahs in a range when '-r' flag is used
 if [[ $range_mode -eq 1 ]]; then
-  check_surah_exists "$surah"
   check_ayah_exists_in_a_surah "$surah" "$ayah"
   check_ayah_exists_in_a_surah "$surah" "$range"
 
@@ -433,8 +439,7 @@ if [[ $range_mode -eq 1 ]]; then
 fi
 
 # Verse mode: Print the ayah with verse number and references when '-v' flag is given
-if [[ verse_mode -eq 1 ]]; then
-  check_verse_exists "$verse_number"
+if [[ $verse_mode -eq 1 ]]; then
   get_surah_title_by_verse "$verse_number"
   echo
   get_verse "$verse_number"
@@ -443,8 +448,7 @@ if [[ verse_mode -eq 1 ]]; then
 fi
 
 # Simple mode: Just print the ayah without verse number and references when '-s' flag is given
-if [[ simple_mode -eq 1 ]]; then
-  check_surah_exists "$surah"
+if [[ $simple_mode -eq 1 ]]; then
   check_ayah_exists_in_a_surah "$surah" "$ayah"
   get_ayah_of_a_surah_simple "$surah" "$ayah"
   exit 0
@@ -453,7 +457,6 @@ fi
 # The default output when no flags are passed
 if [[ -z $2 ]]; then
   # Prints a full surah
-  check_surah_exists "$suah"
   get_surah_title "$surah"
   echo
   get_full_surah "$surah"
@@ -462,7 +465,6 @@ if [[ -z $2 ]]; then
 
 else
   # Print a specific ayah of a surah
-  check_surah_exists "$surah"
   check_ayah_exists_in_a_surah "$surah" "$ayah"
   get_surah_title "$surah"
   echo
