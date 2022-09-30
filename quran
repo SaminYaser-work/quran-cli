@@ -322,8 +322,8 @@ print_help() {
 ###########################################
 
 # variables
-surah=0
-ayah=0
+surah="$1"
+ayah="$2"
 range=0
 
 # Flags
@@ -367,7 +367,6 @@ while getopts 'ahls:v:i:B:b:d:r:' opt; do
     surah="$2"
     ayah="$3"
     range="$4"
-
     ;;
 
   B)
@@ -391,7 +390,6 @@ while getopts 'ahls:v:i:B:b:d:r:' opt; do
     ;;
 
   :)
-    echo -e "option requires an argument."
     print_help
     exit 1
     ;;
@@ -408,6 +406,12 @@ shift "$((OPTIND - 1))"
 # Printing results
 ###########################################
 
+# Show help message if no arguments are passed or if '-h' flag is given
+if [[ "$#" -eq 0 || show_help -eq 1 ]]; then
+  print_help
+  exit 0
+fi
+
 # Info mode: Print inforamtion about a surah when '-i' flag is used
 if [[ $info_mode -eq 1 ]]; then
   check_surah_exists "$surah"
@@ -415,6 +419,7 @@ if [[ $info_mode -eq 1 ]]; then
   exit 0
 fi
 
+# Range mode: Print ayahs in a range when '-r' flag is used
 if [[ $range_mode -eq 1 ]]; then
   check_surah_exists "$surah"
   check_ayah_exists_in_a_surah "$surah" "$ayah"
@@ -437,12 +442,6 @@ if [[ verse_mode -eq 1 ]]; then
   exit 0
 fi
 
-# Show help message if no arguments are passed or if '-h' flag is given
-if [[ "$#" -eq 0 || show_help -eq 1 ]]; then
-  print_help
-  exit 0
-fi
-
 # Simple mode: Just print the ayah without verse number and references when '-s' flag is given
 if [[ simple_mode -eq 1 ]]; then
   check_surah_exists "$surah"
@@ -451,23 +450,22 @@ if [[ simple_mode -eq 1 ]]; then
   exit 0
 fi
 
-# The default output when no options are passed
-
+# The default output when no flags are passed
 if [[ -z $2 ]]; then
   # Prints a full surah
-  check_surah_exists "$1"
-  get_surah_title "$1"
+  check_surah_exists "$suah"
+  get_surah_title "$surah"
   echo
-  get_full_surah "$1"
+  get_full_surah "$surah"
   get_footnote_header
-  get_full_notes "$1"
+  get_full_notes "$surah"
 
 else
   # Print a specific ayah of a surah
-  check_surah_exists "$1"
-  check_ayah_exists_in_a_surah "$1" "$2"
-  get_surah_title "$1"
+  check_surah_exists "$surah"
+  check_ayah_exists_in_a_surah "$surah" "$ayah"
+  get_surah_title "$surah"
   echo
-  get_ayah_of_a_surah "$1" "$2"
-  print_footnotes "$1" "$2"
+  get_ayah_of_a_surah "$surah" "$ayah"
+  print_footnotes "$surah" "$ayah"
 fi
